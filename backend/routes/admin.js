@@ -5,10 +5,6 @@ const { initModels } = require('../models');
 
 const { User, File } = initModels();
 
-router.get('/users', auth(true, true), async (req, res) => {
-  const users = await User.findAll();
-  res.json({ users });
-});
 
 router.post('/users/:id/block', auth(true, true), async (req, res) => {
   const user = await User.findByPk(req.params.id);
