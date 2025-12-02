@@ -1,24 +1,93 @@
+// backend/middleware/auth.js
 const jwt = require('jsonwebtoken');
 const { initModels } = require('../models');
+
 const { User } = initModels();
 
-module.exports = function auth(required = true, admin = false) {
-  return async (req, res, next) => {
-    const header = req.headers.authorization;
-    if (!header) return res.status(401).json({ message: 'No token' });
-
-    const token = header.replace('Bearer ', '');
+/**
+ * auth(required = true)
+ * - Si required = true -> devuelve 401 si no hay token o es inválido
+ * - Si required = false -> deja pasar aun sin token (req.user puede ser undefined)
+ */
+module.exports = function auth(required = true) {
+  return async function (req, res, next) {
     try {
-      const data = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-      const user = await User.findByPk(data.id);
-      if (!user) return res.status(401).json({ message: 'User not found' });
-      if (user.blocked) return res.status(403).json({ message: 'User blocked' });
-      if (admin && !user.isAdmin) return res.status(403).json({ message: 'Admin only' });
+      const header = req.headers.authorization;
 
-      req.user = user;
+      if (!header) {
+        if (required) {
+          return res.status(401).json({ message: 'Debes iniciar sesión' });
+        }
+        return next();
+      }
+
+      // "Bearer xxxxx"
+      const token = header.replace(/^Bearer\s+/i, '').trim();
+      if (!token) {
+        if (required) {
+          return res.status(401).json({ message: 'Token inválido' });
+        }
+        return next();
+      }
+
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+      } catch (err) {
+        console.error('JWT verify error:', err);
+        if (required) {
+          return res.status(401).json({ message: 'Token inválido' });
+        }
+        return next();
+      }
+
+      // Soportar varios formatos de payload:
+      // { userId }, { id }, { user: { id } }, etc.
+      const userId =
+        decoded.userId ??
+        decoded.id ??
+        decoded.userId ??
+        (decoded.user && decoded.user.id);
+
+      if (!userId) {
+        if (required) {
+          return res
+            .status(401)
+            .json({ message: 'Token inválido (sin id de usuario)' });
+        }
+        return next();
+      }
+
+      // Cargar usuario real desde BD
+      const user = await User.findByPk(userId);
+      if (!user) {
+        if (required) {
+          return res.status(401).json({ message: 'Usuario no encontrado' });
+        }
+        return next();
+      }
+
+      // Guardamos datos importantes en req.user
+      req.user = {
+        id: user.id,
+        email: user.email,
+        role: user.role, // <-- IMPORTANTÍSIMO
+        canUpload: user.canUpload,
+        canDownload: user.canDownload,
+        canShare: user.canShare,
+        canViewReports: user.canViewReports,
+        storageQuotaMB: user.storageQuotaMB,
+      };
+
       next();
     } catch (err) {
-      return res.status(401).json({ message: 'Invalid token' });
+      console.error('Error en auth middleware:', err);
+      if (required) {
+        return res
+          .status(500)
+          .json({ message: 'Error interno de autenticación' });
+      }
+      next();
     }
   };
 };

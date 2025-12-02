@@ -11,7 +11,7 @@ const { sequelize, initModels } = require('./models');
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
 const collectionRoutes = require('./routes/collections');
-const adminRoutes = require('./routes/admin');
+
 const statsRoutes = require('./routes/stats');
 const adminUserRoutes = require('./routes/adminUsers');
 
@@ -36,7 +36,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/collections', collectionRoutes);
-app.use('/api/admin', adminRoutes);
+
 app.use('/api/stats', statsRoutes);
 app.use('/api/admin', adminUserRoutes);
 
