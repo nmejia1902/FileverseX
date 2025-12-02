@@ -1,120 +1,124 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+// frontend/src/pages/Dashboard.tsx
+import React, { useEffect, useState } from 'react';
+import api from '../services/api';
 
 interface FileItem {
-  id: number
-  originalName: string
-  downloads: number
-  size: number
-  createdAt: string
+  id: number;
+  originalName: string;
+  downloads: number;
+  size: number;
+  createdAt: string;
 }
 
 interface UserStats {
-  topDownloaded: FileItem[]
-  totalFiles: number
+  topDownloaded: FileItem[];
+  totalFiles: number;
 }
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<UserStats | null>(null)
-  const [files, setFiles] = useState<FileItem[]>([])
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [uploading, setUploading] = useState(false)
-  const [loadingFiles, setLoadingFiles] = useState(false)
+  const [stats, setStats] = useState<UserStats | null>(null);
+  const [files, setFiles] = useState<FileItem[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [loadingFiles, setLoadingFiles] = useState(false);
 
-  const token = localStorage.getItem('token')
-  const headers = token ? { Authorization: 'Bearer ' + token } : {}
+  const token = localStorage.getItem('token');
 
   const loadStats = async () => {
-    if (!token) return
+    if (!token) return;
     try {
-      const res = await axios.get('http://localhost:4000/api/stats/user', {
-        headers,
-      })
-      setStats(res.data)
+      const res = await api.get('/stats/user');
+      setStats(res.data);
     } catch (err) {
-      console.error('Error cargando stats', err)
+      console.error('Error cargando stats', err);
     }
-  }
+  };
 
   const loadFiles = async () => {
-    if (!token) return
+    if (!token) return;
     try {
-      setLoadingFiles(true)
-      const res = await axios.get('http://localhost:4000/api/files/my', {
-        headers,
-      })
-      setFiles(res.data.files)
+      setLoadingFiles(true);
+      // Llamamos a /api/files (router decide si devuelve todos o solo los del usuario)
+      const res = await api.get('/files');
+      setFiles(res.data.files ?? res.data);
     } catch (err) {
-      console.error('Error cargando archivos', err)
+      console.error('Error cargando archivos', err);
     } finally {
-      setLoadingFiles(false)
+      setLoadingFiles(false);
     }
-  }
+  };
 
   useEffect(() => {
-    loadStats()
-    loadFiles()
-  }, [token])
+    loadStats();
+    loadFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedFile(e.target.files?.[0] ?? null)
-  }
+    setSelectedFile(e.target.files?.[0] ?? null);
+  };
 
   const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedFile) return alert('Selecciona un archivo primero')
+    e.preventDefault();
+    if (!selectedFile) return alert('Selecciona un archivo primero');
 
     try {
-      setUploading(true)
-      const formData = new FormData()
-      formData.append('file', selectedFile)
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('file', selectedFile);
 
-      await axios.post('http://localhost:4000/api/files/upload', formData, {
-        headers: { ...headers, 'Content-Type': 'multipart/form-data' },
-      })
+      // No fijar Content-Type, api interceptor añade Authorization
+      await api.post('/files', formData);
 
-      alert('Archivo subido correctamente')
-      setSelectedFile(null)
-      loadFiles()
-      loadStats()
+      alert('Archivo subido correctamente');
+      setSelectedFile(null);
+      await loadFiles();
+      await loadStats();
+    } catch (err: any) {
+      console.error('Error subiendo archivo', err);
+      const msg = err.response?.data?.message || 'Error subiendo archivo';
+      alert(msg);
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   const downloadReport = async (format: 'csv' | 'json') => {
-    if (!token) return alert('Debes iniciar sesión')
-
-    const endpoint = `http://localhost:4000/api/stats/export/report/${format}`
+    if (!token) return alert('Debes iniciar sesión');
 
     try {
-      const res = await axios.get(endpoint, { headers, responseType: 'blob' })
-      const blob = new Blob([res.data])
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `fileversex_informe_general.${format}`
-      a.click()
-      URL.revokeObjectURL(url)
+      const res = await api.get(`/stats/export/report/${format}`, { responseType: 'blob' });
+      const blob = new Blob([res.data]);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `fileversex_informe_general.${format}`;
+      a.click();
+      URL.revokeObjectURL(url);
     } catch {
-      alert('Error exportando archivo')
+      alert('Error exportando archivo');
     }
-  }
+  };
 
   const handleDownload = (f: FileItem) => {
-    window.location.href = `http://localhost:4000/api/files/download/${f.id}`
-  }
+    // Endpoint backend: GET /api/files/:id/download
+    window.location.href = `${(import.meta.env.VITE_API_URL || 'http://localhost:4000/api').replace(/\/$/,'')}/files/${f.id}/download`;
+  };
 
   const handleDeleteFile = async (file: FileItem) => {
-    if (!confirm('¿Eliminar archivo?')) return
-    await axios.delete(`http://localhost:4000/api/files/${file.id}`, { headers })
-    loadFiles()
-    loadStats()
-  }
+    if (!confirm('¿Eliminar archivo?')) return;
+    try {
+      await api.delete(`/files/${file.id}`);
+      await loadFiles();
+      await loadStats();
+    } catch (err: any) {
+      console.error('Error eliminando archivo', err);
+      alert(err.response?.data?.message || 'Error eliminando archivo');
+    }
+  };
 
   return (
     <div className="space-y-6 text-gray-900 dark:text-gray-200">
-
       {/* SUBIR ARCHIVO */}
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-5 space-y-4">
         <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100">Subir archivo</h2>
@@ -137,19 +141,20 @@ export default function Dashboard() {
 
       {/* TOP DESCARGAS + RESUMEN */}
       <section className="grid md:grid-cols-2 gap-4">
-        
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-4">
           <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200">Top archivos descargados</h3>
 
           {stats?.topDownloaded?.length ? (
             <ul className="mt-2 space-y-1 text-sm">
-              {stats.topDownloaded.map(f => (
+              {stats.topDownloaded.map((f) => (
                 <li key={f.id} className="text-gray-700 dark:text-gray-300">
                   {f.originalName} - <span className="text-blue-500">{f.downloads} descargas</span>
                 </li>
               ))}
             </ul>
-          ) : <p className="text-xs text-gray-400 mt-2">Sin datos todavía.</p>}
+          ) : (
+            <p className="text-xs text-gray-400 mt-2">Sin datos todavía.</p>
+          )}
         </div>
 
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-4">
@@ -158,7 +163,6 @@ export default function Dashboard() {
             Total de archivos: <b className="text-blue-500">{stats?.totalFiles ?? 0}</b>
           </p>
         </div>
-
       </section>
 
       {/* INFORME GENERAL */}
@@ -197,7 +201,7 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {files.map(f => (
+                {files.map((f) => (
                   <tr key={f.id} className="border-b border-gray-200 dark:border-gray-700">
                     <td className="py-2">{f.originalName}</td>
                     <td className="py-2">{(f.size / 1024).toFixed(1)} KB</td>
@@ -220,7 +224,6 @@ export default function Dashboard() {
           </div>
         )}
       </section>
-
     </div>
-  )
+  );
 }
