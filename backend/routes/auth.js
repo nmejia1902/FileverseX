@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
@@ -23,9 +23,10 @@ router.post('/register', async (req, res) => {
     const user = await User.create({
       name,
       email,
-      passwordHash: hashed,        // 👈 IMPORTANTE: usamos passwordHash
+      passwordHash: hashed,
       description: description || '',
       role: 'user',
+      avatarUrl: null,
     });
 
     res.json({ message: 'Usuario registrado', user });
@@ -41,15 +42,13 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ where: { email } });
+
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // 👇 AQUÍ estaba el problema: antes usábamos user.password
     if (!user.passwordHash) {
-      return res
-        .status(500)
-        .json({ message: 'El usuario no tiene passwordHash almacenado' });
+      return res.status(500).json({ message: 'Usuario sin passwordHash guardado' });
     }
 
     const ok = bcrypt.compareSync(password, user.passwordHash);
@@ -63,7 +62,17 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    res.json({ token });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatarUrl: user.avatarUrl,
+      }
+    });
+
   } catch (err) {
     console.error('Error en /auth/login:', err);
     res.status(500).json({ message: 'Error al iniciar sesión', error: err.message });
@@ -74,7 +83,7 @@ router.post('/login', async (req, res) => {
 router.get('/me', auth(true), async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
-      attributes: ['id', 'name', 'email', 'role', 'description'],
+      attributes: ['id', 'name', 'email', 'role', 'avatarUrl'],
     });
 
     if (!user) {
@@ -82,8 +91,9 @@ router.get('/me', auth(true), async (req, res) => {
     }
 
     res.json({ user });
+
   } catch (err) {
-    console.error('Error en /auth/me:', err);
+    console.error('Error /auth/me:', err);
     res.status(500).json({ message: 'Error interno', details: err.message });
   }
 });

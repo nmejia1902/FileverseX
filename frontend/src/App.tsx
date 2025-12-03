@@ -1,3 +1,4 @@
+// src/App.tsx
 import React from 'react'
 import { Link, Routes, Route, useNavigate } from 'react-router-dom'
 import Home from './pages/Home'
@@ -7,6 +8,7 @@ import Dashboard from './pages/Dashboard'
 import Admin from './pages/Admin'
 import Collections from './pages/Collections'
 import CollectionDetail from './pages/CollectionDetail'
+import Profile from './pages/Profile'
 import { ThemeToggleButton } from './theme'
 import { useUser } from './hooks/useUser'
 
@@ -16,9 +18,16 @@ export default function App() {
 
   const logout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
     setUser(null)
     navigate('/login')
   }
+
+  // URL completa del avatar (si existe)
+  const avatarFullUrl =
+    user && user.avatarUrl
+      ? `http://localhost:4000${user.avatarUrl}`
+      : null
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-slate-900 dark:text-slate-100">
@@ -60,9 +69,25 @@ export default function App() {
           <div className="flex items-center gap-3 text-xs sm:text-sm">
             {user ? (
               <>
-                <span className="text-gray-700 dark:text-gray-200">
-                  👤 {user.name || user.email}
-                </span>
+                {/* Bloque avatar + nombre + link perfil */}
+                <Link to="/profile" className="flex items-center gap-2">
+                  {avatarFullUrl ? (
+                    <img
+                      src={avatarFullUrl}
+                      alt="Avatar"
+                      className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-base">
+                      👤
+                    </div>
+                  )}
+
+                  <span className="text-gray-700 dark:text-gray-200">
+                    {user.name || user.email}
+                  </span>
+                </Link>
+
                 <button
                   onClick={logout}
                   className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
@@ -102,6 +127,7 @@ export default function App() {
           <Route path="/collections" element={<Collections />} />
           <Route path="/collections/:id" element={<CollectionDetail />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
     </div>

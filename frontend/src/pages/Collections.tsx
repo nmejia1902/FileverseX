@@ -58,7 +58,8 @@ export default function CollectionsPage() {
 
     const loadFiles = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/files/my", { headers });
+        // 👇 AQUÍ EL CAMBIO IMPORTANTE: /api/files (ya no /my)
+        const res = await axios.get("http://localhost:4000/api/files", { headers });
         setFiles(res.data.files);
       } catch (err) {
         console.error("Error cargando archivos", err);
