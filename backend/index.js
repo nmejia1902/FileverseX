@@ -11,9 +11,10 @@ const { sequelize, initModels } = require('./models');
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
 const collectionRoutes = require('./routes/collections');
-const userProfileRoutes = require('./routes/userProfile');
+const adminRoutes = require('./routes/admin');
 const statsRoutes = require('./routes/stats');
 const adminUserRoutes = require('./routes/adminUsers');
+const userProfileRoutes = require('./routes/userProfile'); // 👈 NUEVO
 
 const app = express();
 
@@ -36,29 +37,23 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/collections', collectionRoutes);
-app.use('/api/users', userProfileRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/admin', adminUserRoutes);
+app.use('/api/profile', userProfileRoutes); // 👈 NUEVA RUTA
 
 const PORT = process.env.PORT || 4000;
 
 // ===== Arranque del servidor + BD =====
 async function start() {
   try {
-    // 1. Probar conexión a la BD
     await sequelize.authenticate();
     console.log('✅ Conectado a la base de datos');
 
-    // 2. Inicializar modelos y relaciones
     initModels();
-
-    // 3. Sincronizar modelos con la BD
-    // La primera vez, si quieres que cree/actualice tablas, puedes usar:
-    // await sequelize.sync({ alter: true });
     await sequelize.sync();
     console.log('✅ Modelos sincronizados');
 
-    // 4. Levantar servidor HTTP
     app.listen(PORT, () => {
       console.log(`🚀 Backend escuchando en http://localhost:${PORT}`);
     });
