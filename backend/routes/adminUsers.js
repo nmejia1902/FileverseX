@@ -1,4 +1,4 @@
-// backend/routes/adminUsers.js
+
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const auth = require('../middleware/auth');
@@ -7,7 +7,7 @@ const { initModels } = require('../models');
 const router = express.Router();
 const { User, File } = initModels();
 
-// ===== Middleware: solo admin =====
+
 async function verifyAdmin(req, res, next) {
   try {
     if (!req.user || !req.user.id) {
@@ -22,12 +22,12 @@ async function verifyAdmin(req, res, next) {
     const role = (dbUser.role || '').toString().toLowerCase();
     const isAdminFlag = !!dbUser.isAdmin;
 
-    // Aceptamos admin por role (case-insensitive) o por bandera isAdmin
+    
     if (!isAdminFlag && role !== 'admin') {
       return res.status(403).json({ message: 'Solo administradores pueden acceder' });
     }
 
-    // por si acaso, actualizamos req.user
+   
     req.user.role = dbUser.role;
     req.user.isAdmin = isAdminFlag;
 
@@ -38,7 +38,7 @@ async function verifyAdmin(req, res, next) {
   }
 }
 
-// ===== GET /api/admin/users =====
+
 router.get('/users', auth(true), verifyAdmin, async (req, res) => {
   try {
     const users = await User.findAll({
@@ -82,7 +82,7 @@ router.get('/users', auth(true), verifyAdmin, async (req, res) => {
   }
 });
 
-// ===== POST /api/admin/users =====
+
 router.post('/users', auth(true), verifyAdmin, async (req, res) => {
   try {
     const {
@@ -130,7 +130,7 @@ router.post('/users', auth(true), verifyAdmin, async (req, res) => {
   }
 });
 
-// ===== PATCH /api/admin/users/:id =====
+
 router.patch('/users/:id', auth(true), verifyAdmin, async (req, res) => {
   try {
     const userId = Number(req.params.id);
@@ -167,7 +167,7 @@ router.patch('/users/:id', auth(true), verifyAdmin, async (req, res) => {
   }
 });
 
-// ===== DELETE /api/admin/users/:id =====
+
 router.delete('/users/:id', auth(true), verifyAdmin, async (req, res) => {
   try {
     const userId = Number(req.params.id);

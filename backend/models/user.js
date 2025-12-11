@@ -26,7 +26,7 @@ canViewReports: {
 },
 storageQuotaMB: {
   type: DataTypes.INTEGER,
-  allowNull: true,  // null = sin límite
+  allowNull: true,  
 },
 usedStorageBytes: {
   type: DataTypes.BIGINT,

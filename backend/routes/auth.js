@@ -8,7 +8,6 @@ const router = express.Router();
 
 const { User } = initModels();
 
-// ========================  REGISTRO ========================
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, description } = req.body;
@@ -36,7 +35,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ========================  LOGIN ========================
+
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -79,7 +78,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ========================  GET /AUTH/ME ========================
 router.get('/me', auth(true), async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {

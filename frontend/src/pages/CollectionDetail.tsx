@@ -8,8 +8,8 @@ interface FileItem {
   mimeType: string;
   size: number;
   downloads: number;
-  filename?: string; // nuevo backend
-  path?: string;     // por si viniera del backend viejo
+  filename?: string; 
+  path?: string;     
 }
 
 interface CollectionDetailData {
@@ -38,7 +38,7 @@ export default function CollectionDetail() {
   const token = localStorage.getItem("token");
   const headers = token ? { Authorization: "Bearer " + token } : {};
 
-  // ================== CARGAR DETALLE ==================
+
   const loadCollection = async () => {
     if (!id) return;
     try {
@@ -47,7 +47,7 @@ export default function CollectionDetail() {
         `http://localhost:4000/api/collections/${id}`,
         { headers }
       );
-      // asumimos que el backend devuelve { collection, files }
+     
       const data = res.data;
       const col: CollectionDetailData = {
         ...data.collection,
@@ -64,29 +64,27 @@ export default function CollectionDetail() {
 
   useEffect(() => {
     loadCollection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, [id, token]);
 
-  // ================== URL PREVIEW ==================
+
   const getPreviewUrl = (file: FileItem): string | null => {
-    // 1) si tenemos filename (nuevo backend)
+
     if (file.filename) {
       return `http://localhost:4000/uploads/${file.filename}`;
     }
-    // 2) si viene path, intentamos extraer a partir de /uploads/
+ 
     if (file.path) {
-      // normalizamos las barras y recortamos hasta 'uploads/...'
       const norm = file.path.replace(/\\/g, "/");
       const idx = norm.lastIndexOf("/uploads/");
       if (idx !== -1) {
-        const rel = norm.substring(idx + 1); // quitar la barra inicial
+        const rel = norm.substring(idx + 1); 
         return `http://localhost:4000/${rel}`;
       }
     }
     return null;
   };
 
-  // ================== DESCARGAR ARCHIVO ==================
   const handleDownload = async (file: FileItem) => {
     if (!token) {
       alert("Debes iniciar sesión");

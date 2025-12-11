@@ -29,7 +29,7 @@ interface NewUserForm {
   email: string
   password: string
   role: 'user' | 'admin'
-  storageQuotaMB: number | '' // '' cuando vacío
+  storageQuotaMB: number | ''
 }
 
 export default function AdminPage() {
@@ -50,7 +50,6 @@ export default function AdminPage() {
   const token = localStorage.getItem('token')
   const headers = token ? { Authorization: 'Bearer ' + token } : {}
 
-  // ===================== CARGAR USUARIOS =====================
   const loadUsers = async () => {
     if (!token) return
     try {
@@ -75,7 +74,6 @@ export default function AdminPage() {
     loadUsers()
   }, [token])
 
-  // ===================== ACTUALIZAR USUARIO (PATCH) =====================
   const patchUser = async (
     id: number,
     data: Partial<{
@@ -96,7 +94,7 @@ export default function AdminPage() {
       await axios.patch(`http://localhost:4000/api/admin/users/${id}`, data, {
         headers,
       })
-      // Actualizamos localmente sin recargar todo
+
       setUsers((prev) =>
         prev.map((u) => (u.id === id ? { ...u, ...data } as AdminUser : u))
       )
@@ -108,7 +106,6 @@ export default function AdminPage() {
     }
   }
 
-  // ===================== ELIMINAR USUARIO =====================
   const deleteUser = async (id: number) => {
     if (!token) {
       alert('Debes iniciar sesión')
@@ -128,7 +125,6 @@ export default function AdminPage() {
     }
   }
 
-  // ===================== CREAR USUARIO =====================
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!token) {
@@ -160,7 +156,6 @@ export default function AdminPage() {
         { headers }
       )
 
-      // recargamos lista
       await loadUsers()
 
       setNewUser({
@@ -180,13 +175,11 @@ export default function AdminPage() {
     }
   }
 
-  // ===================== TOGGLES =====================
   const toggleField = (user: AdminUser, field: keyof AdminUser) => {
     const value = !(user as any)[field]
     patchUser(user.id, { [field]: value } as any)
   }
 
-  // ===================== RENDER =====================
   const chartData = users.map((u) => ({
     name: u.name || u.email,
     used: u.usedStorageMB,
@@ -205,8 +198,6 @@ export default function AdminPage() {
           {error}
         </div>
       )}
-
-      {/* CREAR USUARIO */}
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-5 space-y-3">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Crear usuario
@@ -301,8 +292,6 @@ export default function AdminPage() {
           </div>
         </form>
       </section>
-
-      {/* GRÁFICO DE ALMACENAMIENTO */}
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-5 space-y-3">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Uso de almacenamiento por usuario
@@ -327,7 +316,6 @@ export default function AdminPage() {
         )}
       </section>
 
-      {/* TABLA DE USUARIOS */}
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-5 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -384,7 +372,7 @@ export default function AdminPage() {
                       </select>
                     </td>
 
-                    {/* TOGGLES */}
+                    
                     <td className="py-2 px-2 text-center align-middle">
                       <Toggle
                         checked={u.canUpload}
@@ -410,7 +398,7 @@ export default function AdminPage() {
                       />
                     </td>
 
-                    {/* CUOTA + USO */}
+                    
                     <td className="py-2 px-2 text-center align-middle">
                       <input
                         type="number"
@@ -429,7 +417,7 @@ export default function AdminPage() {
                       {formatMB(u.usedStorageMB)}
                     </td>
 
-                    {/* ACCIONES */}
+                    
                     <td className="py-2 px-2 text-center align-middle">
                       <button
                         onClick={() => deleteUser(u.id)}
@@ -454,7 +442,7 @@ export default function AdminPage() {
   )
 }
 
-// =============== Toggle simple con Tailwind ===============
+
 interface ToggleProps {
   checked: boolean
   onChange: () => void

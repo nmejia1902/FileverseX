@@ -43,7 +43,7 @@ export default function CollectionsPage() {
   const headers = token ? { Authorization: "Bearer " + token } : {};
   const navigate = useNavigate();
 
-  // ================= CARGA DE DATOS ===================
+  
   useEffect(() => {
     if (!token) return;
 
@@ -58,7 +58,7 @@ export default function CollectionsPage() {
 
     const loadFiles = async () => {
       try {
-        // 👇 AQUÍ EL CAMBIO IMPORTANTE: /api/files (ya no /my)
+      
         const res = await axios.get("http://localhost:4000/api/files", { headers });
         setFiles(res.data.files);
       } catch (err) {
@@ -80,7 +80,7 @@ export default function CollectionsPage() {
     loadPublic();
   }, [token]);
 
-  // ================= CREAR COLECCIÓN ===================
+  
   const handleCreateCollection = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return alert("El título es obligatorio");
@@ -103,7 +103,7 @@ export default function CollectionsPage() {
     }
   };
 
-  // ================= AGREGAR ARCHIVO A COLECCIÓN ===================
+
   const handleAddFile = async (collectionId: number) => {
     if (!selectedFileId) return alert("Selecciona un archivo");
 
@@ -119,7 +119,7 @@ export default function CollectionsPage() {
     }
   };
 
-  // ================= LIKE A COLECCIÓN ===================
+ 
   const handleLike = async (id: number) => {
     try {
       const res = await axios.post(
@@ -136,7 +136,7 @@ export default function CollectionsPage() {
     }
   };
 
-  // ================= ELIMINAR COLECCIÓN ===================
+  
   const deleteCollection = async (id: number) => {
     if (!confirm("¿Seguro que deseas eliminar esta colección?")) return;
 
@@ -153,7 +153,7 @@ export default function CollectionsPage() {
     <div className="space-y-7 text-gray-900 dark:text-gray-200">
       <h1 className="text-2xl sm:text-3xl font-bold">📁 Colecciones</h1>
 
-      {/* ================= CREAR ================= */}
+      
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-5 space-y-3">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-100">
           Crear colección
@@ -189,7 +189,7 @@ export default function CollectionsPage() {
         </form>
       </section>
 
-      {/* ================= MIS COLECCIONES ================= */}
+      
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-5 space-y-3">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Mis colecciones
@@ -232,7 +232,7 @@ export default function CollectionsPage() {
                 </button>
               </div>
 
-              {/* AGREGAR ARCHIVO */}
+              
               <div className="mt-3 space-y-2">
                 <div className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                   Agregar archivo:
@@ -265,7 +265,6 @@ export default function CollectionsPage() {
         </div>
       </section>
 
-      {/* ================= COLECCIONES PÚBLICAS ================= */}
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-5 space-y-3">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Explorar colecciones públicas

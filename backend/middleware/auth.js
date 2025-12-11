@@ -47,7 +47,7 @@ module.exports = function auth(required = true) {
         id: user.id,
         email: user.email,
         role: user.role,
-        avatarUrl: user.avatarUrl, // 👈 NUEVO
+        avatarUrl: user.avatarUrl,
         canUpload: user.canUpload,
         canDownload: user.canDownload,
         canShare: user.canShare,

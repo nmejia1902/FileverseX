@@ -24,7 +24,7 @@ export default function Dashboard() {
   const token = localStorage.getItem('token')
   const headers = token ? { Authorization: 'Bearer ' + token } : {}
 
-  // ================== CARGAR STATS ==================
+  
   const loadStats = async () => {
     if (!token) return
     try {
@@ -37,12 +37,12 @@ export default function Dashboard() {
     }
   }
 
-  // ================== CARGAR ARCHIVOS ==================
+  
   const loadFiles = async () => {
     if (!token) return
     try {
       setLoadingFiles(true)
-      // backend: GET /api/files
+      
       const res = await axios.get('http://localhost:4000/api/files', {
         headers,
       })
@@ -63,7 +63,7 @@ export default function Dashboard() {
     setSelectedFile(e.target.files?.[0] ?? null)
   }
 
-  // ================== SUBIR ARCHIVO ==================
+  
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedFile) return alert('Selecciona un archivo primero')
@@ -73,7 +73,7 @@ export default function Dashboard() {
       const formData = new FormData()
       formData.append('file', selectedFile)
 
-      // backend: POST /api/files
+      
       await axios.post('http://localhost:4000/api/files', formData, {
         headers: { ...headers, 'Content-Type': 'multipart/form-data' },
       })
@@ -90,7 +90,7 @@ export default function Dashboard() {
     }
   }
 
-  // ================== EXPORTAR INFORME ==================
+ 
   const downloadReport = async (format: 'csv' | 'json') => {
     if (!token) return alert('Debes iniciar sesión')
 
@@ -110,7 +110,7 @@ export default function Dashboard() {
     }
   }
 
-  // ================== DESCARGAR ARCHIVO ==================
+  
   const handleDownload = async (f: FileItem) => {
     if (!token) {
       alert('Debes iniciar sesión')
@@ -118,7 +118,7 @@ export default function Dashboard() {
     }
 
     try {
-      // backend: GET /api/files/:id/download
+      
       const res = await axios.get(
         `http://localhost:4000/api/files/${f.id}/download`,
         {
@@ -142,11 +142,11 @@ export default function Dashboard() {
     }
   }
 
-  // ================== ELIMINAR ARCHIVO ==================
+  
   const handleDeleteFile = async (file: FileItem) => {
     if (!confirm('¿Eliminar archivo?')) return
     try {
-      // backend: DELETE /api/files/:id
+      
       await axios.delete(`http://localhost:4000/api/files/${file.id}`, {
         headers,
       })
@@ -160,7 +160,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 text-gray-900 dark:text-gray-200">
-      {/* SUBIR ARCHIVO */}
+      
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-5 space-y-4">
         <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100">
           Subir archivo
@@ -189,7 +189,7 @@ export default function Dashboard() {
         </p>
       </section>
 
-      {/* TOP DESCARGAS + RESUMEN */}
+      
       <section className="grid md:grid-cols-2 gap-4">
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-4">
           <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200">
@@ -221,7 +221,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* INFORME GENERAL */}
+      
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-5 space-y-4">
         <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100">
           Exportar informe general
@@ -248,7 +248,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* MIS ARCHIVOS */}
+      
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl p-5">
         <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100">
           Mis archivos

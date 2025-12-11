@@ -1,4 +1,4 @@
-// src/db.ts
+
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
@@ -15,7 +15,6 @@ export const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-// Función opcional para probar la conexión al iniciar
 export async function testDbConnection() {
   try {
     const [rows] = await pool.query("SELECT 1 AS result");

@@ -1,4 +1,4 @@
-// backend/index.js
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const { sequelize, initModels } = require('./models');
 
-// Rutas
+
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
 const collectionRoutes = require('./routes/collections');
@@ -18,7 +18,6 @@ const userProfileRoutes = require('./routes/userProfile'); // 👈 NUEVO
 
 const app = express();
 
-// ===== Config uploads =====
 const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 const uploadPath = path.join(__dirname, UPLOAD_DIR);
 
@@ -29,36 +28,33 @@ if (!fs.existsSync(uploadPath)) {
 
 app.use('/uploads', express.static(uploadPath));
 
-// ===== Middlewares =====
 app.use(cors());
 app.use(express.json());
 
-// ===== Rutas API =====
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/collections', collectionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/admin', adminUserRoutes);
-app.use('/api/profile', userProfileRoutes); // 👈 NUEVA RUTA
+app.use('/api/profile', userProfileRoutes); 
 
 const PORT = process.env.PORT || 4000;
 
-// ===== Arranque del servidor + BD =====
 async function start() {
   try {
     await sequelize.authenticate();
-    console.log('✅ Conectado a la base de datos');
+    console.log(' Conectado a la base de datos');
 
     initModels();
     await sequelize.sync();
-    console.log('✅ Modelos sincronizados');
+    console.log(' Modelos sincronizados');
 
     app.listen(PORT, () => {
-      console.log(`🚀 Backend escuchando en http://localhost:${PORT}`);
+      console.log(` Backend escuchando en http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error('❌ Error al iniciar el servidor:', err);
+    console.error(' Error al iniciar el servidor:', err);
     process.exit(1);
   }
 }

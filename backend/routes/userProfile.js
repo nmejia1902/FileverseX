@@ -1,4 +1,4 @@
-// backend/routes/userProfile.js
+
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -9,14 +9,14 @@ const { initModels } = require('../models');
 const router = express.Router();
 const { User } = initModels();
 
-// Carpeta destino /uploads/avatars
+
 const avatarDir = path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads', 'avatars');
 
 if (!fs.existsSync(avatarDir)) {
   fs.mkdirSync(avatarDir, { recursive: true });
 }
 
-// Configuración de almacenamiento Multer
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, avatarDir),
   filename: (req, file, cb) => {
@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 3 * 1024 * 1024 }, // max 3MB
+  limits: { fileSize: 3 * 1024 * 1024 }, 
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith("image/")) {
       return cb(new Error("Solo se permiten imágenes"));
@@ -38,7 +38,7 @@ const upload = multer({
 });
 
 
-// ===================== SUBIR/ACTUALIZAR AVATAR =====================
+
 router.post('/me/avatar', auth(true), upload.single('avatar'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: "No se envió imagen" });
@@ -50,13 +50,12 @@ router.post('/me/avatar', auth(true), upload.single('avatar'), async (req, res) 
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Si ya tenía avatar, eliminamos archivo previo
+  
     if (user.avatarUrl) {
       const prevPath = path.join(__dirname, '..', user.avatarUrl.replace(/^\//, ''));
       if (fs.existsSync(prevPath)) fs.unlink(prevPath, () => {});
     }
 
-    // Guardamos nueva ruta
     const relPath = `/uploads/avatars/${req.file.filename}`;
     user.avatarUrl = relPath;
     await user.save();
@@ -69,7 +68,6 @@ router.post('/me/avatar', auth(true), upload.single('avatar'), async (req, res) 
 });
 
 
-// ===================== CONSULTAR PERFIL =====================
 router.get('/me', auth(true), async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {

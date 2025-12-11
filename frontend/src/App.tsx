@@ -14,7 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import Collections from "./pages/Collections";
 import CollectionDetail from "./pages/CollectionDetail";
-import Profile from "./pages/Profile"; // 👈 NUEVO
+import Profile from "./pages/Profile";
 import { ThemeToggleButton } from "./theme";
 import { useUser } from "./hooks/useUser";
 
@@ -34,18 +34,21 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-slate-900 dark:text-slate-100">
-      {/* NAVBAR (oculto en login / registro) */}
+    
       {!isAuthPage && (
         <nav className="bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800 backdrop-blur">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-            <Link
-              to="/"
-              className="font-bold text-lg sm:text-xl tracking-tight text-blue-700 dark:text-blue-400"
-            >
+            <Link to="/" className="flex items-center gap-2">
+            <img
+              src="/logo.png"
+              alt="Logo"
+              className="w-10 h-10 object-contain rounded-xl"/>
+              <span className="font-bold text-lg sm:text-xl tracking-tight text-blue-700 dark:text-blue-400">
               FileverseX
-            </Link>
+            </span>
+          </Link>
 
-            {/* Links principales */}
+            
             <div className="flex items-center gap-2 text-xs sm:text-sm">
               <Link
                 to="/dashboard"
@@ -69,11 +72,11 @@ export default function App() {
 
             <div className="flex-1" />
 
-            {/* Usuario / Login – Registro */}
+            
             <div className="flex items-center gap-3 text-xs sm:text-sm">
               {user ? (
                 <>
-                  {/* Bloque usuario: avatar + nombre -> va a /profile */}
+                  
                   <button
                     type="button"
                     onClick={() => navigate("/profile")}
@@ -129,7 +132,7 @@ export default function App() {
         </nav>
       )}
 
-      {/* CONTENIDO */}
+      
       {isAuthPage ? (
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -139,7 +142,7 @@ export default function App() {
           <Route path="/collections" element={<Collections />} />
           <Route path="/collections/:id" element={<CollectionDetail />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/profile" element={<Profile />} /> {/* 👈 NUEVO */}
+          <Route path="/profile" element={<Profile />} /> 
         </Routes>
       ) : (
         <main className="max-w-6xl mx-auto px-4 py-6">
@@ -151,7 +154,7 @@ export default function App() {
             <Route path="/collections" element={<Collections />} />
             <Route path="/collections/:id" element={<CollectionDetail />} />
             <Route path="/admin" element={<Admin />} />
-            <Route path="/profile" element={<Profile />} /> {/* 👈 NUEVO */}
+            <Route path="/profile" element={<Profile />} /> 
           </Routes>
         </main>
       )}

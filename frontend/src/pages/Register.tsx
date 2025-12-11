@@ -22,21 +22,21 @@ export default function Register() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#071b9a] via-[#0a2fb3] to-[#1a0f75]">
 
-      {/* Fondo decorativo igual al login */}
+      
       <div className="relative w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl bg-transparent px-4 sm:px-8 py-10 sm:py-16">
 
-        {/* Figuras decorativas */}
+        
         <div className="pointer-events-none absolute -left-32 -top-32 h-64 w-64 bg-[#ffb300] opacity-40 rounded-3xl rotate-12" />
         <div className="pointer-events-none absolute -right-40 top-16 h-72 w-72 bg-[#4a00e0] opacity-40 rounded-3xl -rotate-12" />
         <div className="pointer-events-none absolute -bottom-24 left-1/2 -translate-x-1/2 h-72 w-[90%] bg-[#1a237e] opacity-40 rounded-[3rem]" />
 
-        {/* Contenido */}
+        
         <div className="relative flex flex-col gap-6 text-white">
 
-          {/* encabezado */}
+          
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <div className="flex items-center gap-3">
-              {/* Logo */}
+              
               <img
                 src="/logo.png"
                 alt="FileVerseX"
@@ -55,7 +55,7 @@ export default function Register() {
             </Link>
           </div>
 
-          {/* TARJETA DE FORMULARIO */}
+          
           <div className="w-full flex items-center justify-center">
             <form
               onSubmit={handleSubmit}

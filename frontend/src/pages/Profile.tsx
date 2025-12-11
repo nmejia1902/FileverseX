@@ -1,4 +1,4 @@
-// src/pages/Profile.tsx
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "../hooks/useUser";
@@ -12,7 +12,7 @@ export default function Profile() {
   const token = localStorage.getItem("token");
   const headers = token ? { Authorization: "Bearer " + token } : {};
 
-  // si quieres forzar que cargue avatar desde /api/profile/me
+ 
   useEffect(() => {
     if (!token || user?.avatarUrl) return;
 
@@ -28,7 +28,7 @@ export default function Profile() {
         console.error("Error cargando perfil:", err);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [token]);
 
   const currentAvatarUrl = user?.avatarUrl
@@ -109,7 +109,7 @@ export default function Profile() {
         <h2 className="text-lg font-semibold">Foto de perfil</h2>
 
         <div className="flex items-center gap-4">
-          {/* Avatar actual */}
+          
           <div className="flex flex-col items-center gap-1">
             <div className="h-20 w-20 rounded-full overflow-hidden border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-3xl">
               {currentAvatarUrl ? (
@@ -127,7 +127,7 @@ export default function Profile() {
             </span>
           </div>
 
-          {/* Preview nueva */}
+         
           {preview && (
             <div className="flex flex-col items-center gap-1">
               <div className="h-20 w-20 rounded-full overflow-hidden border border-blue-400 bg-gray-100 dark:bg-gray-700">

@@ -17,8 +17,6 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light')
-
-  // Cargar tema inicial desde localStorage o media query
   useEffect(() => {
     const stored = localStorage.getItem('fileversex-theme') as Theme | null
     if (stored === 'light' || stored === 'dark') {
@@ -65,7 +63,6 @@ export function useTheme() {
   return ctx
 }
 
-// Un pequeño botón reutilizable
 export function ThemeToggleButton() {
   const { theme, toggleTheme } = useTheme()
 

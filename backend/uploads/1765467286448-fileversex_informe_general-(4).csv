@@ -1,0 +1,9 @@
+tipo,total_archivos,total_colecciones,descargas_totales,likes_totales_colecciones,id_archivo,nombre_archivo,tipo_mime,tamano_bytes,tamano_mb,descargas_archivo,colecciones_del_archivo,likes_totales_en_colecciones_del_archivo,creado_archivo,id_coleccion,titulo_coleccion,descripcion_coleccion,likes_coleccion,publica_coleccion,cantidad_archivos_coleccion,archivos_nombres_en_coleccion,creado_coleccion
+resumen,5,2,5,13,,,,,,,,,,,,,,,,,
+archivo,,,,,25,Captura de pantalla 2025-12-03 230928.png,image/png,488282,0.47,0,Prueba,10,1765464569000,,,,,,,,
+archivo,,,,,22,fileversex.pdf,application/pdf,109058,0.1,0,,0,1764978988000,,,,,,,,
+archivo,,,,,17,FotoPerfil.jpg,image/jpeg,16594,0.02,2,Prueba,10,1764735846000,,,,,,,,
+archivo,,,,,14,Diagrama_Relacion.pdf,application/pdf,27587,0.03,2,,0,1764728419000,,,,,,,,
+archivo,,,,,8,InstalacionAndroid.pdf,application/pdf,1870225,1.78,1,,0,1764641117000,,,,,,,,
+coleccion,,,,,,,,,,,,,,21,Imagenes,imagenes,3,1,0,,1765464584000
+coleccion,,,,,,,,,,,,,,19,Prueba,Coleccion de prueba ,10,1,2,FotoPerfil.jpg | Captura de pantalla 2025-12-03 230928.png,1764979022000

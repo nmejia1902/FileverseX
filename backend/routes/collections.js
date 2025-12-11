@@ -5,11 +5,7 @@ const { initModels } = require('../models');
 
 const { Collection, File, User } = initModels();
 
-/**
- * Crear una nueva colección
- * POST /api/collections
- * body: { title, description?, isPublic? }
- */
+
 router.post('/', auth(true), async (req, res) => {
   try {
     const { title, description, isPublic } = req.body;
@@ -29,10 +25,7 @@ router.post('/', auth(true), async (req, res) => {
   }
 });
 
-/**
- * Listar colecciones propias
- * GET /api/collections/mine
- */
+
 router.get('/mine', auth(true), async (req, res) => {
   try {
     const collections = await Collection.findAll({
@@ -41,13 +34,13 @@ router.get('/mine', auth(true), async (req, res) => {
         {
           model: File,
           as: 'files',
-          through: { attributes: [] }, // no mostrar tabla intermedia
+          through: { attributes: [] },
         },
       ],
       order: [['createdAt', 'DESC']],
     });
 
-    // añadimos cantidad de archivos para que sea más fácil en el frontend
+  
     const result = collections.map(c => ({
       id: c.id,
       title: c.title,
@@ -65,10 +58,7 @@ router.get('/mine', auth(true), async (req, res) => {
   }
 });
 
-/**
- * Listar colecciones públicas (para explorar y dar like)
- * GET /api/collections/public
- */
+
 router.get('/public', auth(true), async (req, res) => {
   try {
     const collections = await Collection.findAll({
@@ -90,10 +80,7 @@ router.get('/public', auth(true), async (req, res) => {
   }
 });
 
-/**
- * Detalle de una colección con sus archivos
- * GET /api/collections/:id
- */
+
 router.get('/:id', auth(true), async (req, res) => {
   try {
     const collection = await Collection.findByPk(req.params.id, {
@@ -108,7 +95,7 @@ router.get('/:id', auth(true), async (req, res) => {
 
     if (!collection) return res.status(404).json({ message: 'Colección no encontrada' });
 
-    // Si la colección no es pública y no es del usuario → no dejar ver
+    
     if (!collection.isPublic && collection.userId !== req.user.id) {
       return res.status(403).json({ message: 'No tienes acceso a esta colección' });
     }
@@ -120,17 +107,13 @@ router.get('/:id', auth(true), async (req, res) => {
   }
 });
 
-/**
- * Añadir un archivo a una colección
- * POST /api/collections/:id/add
- * body: { fileId }
- */
+
 router.post('/:id/add', auth(true), async (req, res) => {
   try {
     const collection = await Collection.findByPk(req.params.id);
     if (!collection) return res.status(404).json({ message: 'Colección no encontrada' });
 
-    // Solo el dueño puede modificar su colección
+    
     if (collection.userId !== req.user.id) {
       return res.status(403).json({ message: 'No puedes modificar esta colección' });
     }
@@ -149,10 +132,7 @@ router.post('/:id/add', auth(true), async (req, res) => {
   }
 });
 
-/**
- * Dar like a una colección
- * POST /api/collections/:id/like
- */
+
 router.post('/:id/like', auth(true), async (req, res) => {
   try {
     const collection = await Collection.findByPk(req.params.id);
@@ -168,11 +148,7 @@ router.post('/:id/like', auth(true), async (req, res) => {
   }
 });
 
-/**
- * Editar colección (solo dueño)
- * PUT /api/collections/:id
- * body: { title?, description?, isPublic? }
- */
+
 router.put('/:id', auth(true), async (req, res) => {
   try {
     const collection = await Collection.findByPk(req.params.id);
@@ -197,10 +173,7 @@ router.put('/:id', auth(true), async (req, res) => {
   }
 });
 
-/**
- * Eliminar colección (solo dueño)
- * DELETE /api/collections/:id
- */
+
 router.delete('/:id', auth(true), async (req, res) => {
   try {
     const collection = await Collection.findByPk(req.params.id);

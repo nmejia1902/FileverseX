@@ -73,7 +73,7 @@ export default function Login() {
             </Link>
           </div>
 
-          {/* TARJETA CENTRAL DE LOGIN */}
+     
           <div className="w-full flex items-center justify-center">
             <div className="w-full max-w-sm bg-[#39a4ff] rounded-[2rem] border-4 border-[#6d4aff] shadow-[0_0_30px_rgba(0,0,0,0.4)] px-6 sm:px-10 py-8 sm:py-10 text-center">
               <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-[#ffeb3b]">
@@ -81,7 +81,7 @@ export default function Login() {
               </h1>
 
               <form onSubmit={handleSubmit} className="space-y-4 text-left">
-                {/* USUARIO / CORREO */}
+               
                 <div className="space-y-1">
                   <label className="text-xs text-white/90">
                     Correo
@@ -98,7 +98,7 @@ export default function Login() {
                   </div>
                 </div>
 
-                {/* CONTRASEÑA */}
+                
                 <div className="space-y-1">
                   <label className="text-xs text-white/90">Contraseña</label>
                   <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-inner">
@@ -120,7 +120,7 @@ export default function Login() {
                   </div>
                 </div>
 
-                {/* BOTÓN LOGIN */}
+                
                 <div className="pt-2">
                   <button
                     type="submit"

@@ -13,7 +13,7 @@ const { User, File } = initModels();
 const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, "..", "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-// --- Multer ---
+
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-// ================== GET FILE LIST ==================
+
 router.get("/", auth(true), async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
@@ -40,7 +40,7 @@ router.get("/", auth(true), async (req, res) => {
   }
 });
 
-// ================== UPLOAD ==================
+
 router.post(
   "/",
   auth(true),
@@ -53,7 +53,7 @@ router.post(
       const saved = await File.create({
         userId: req.user.id,
         originalName: req.file.originalname,
-        filename: req.file.filename, // guardamos solo nombre
+        filename: req.file.filename, 
         mimeType: req.file.mimetype,
         size: req.file.size,
       });
@@ -65,7 +65,7 @@ router.post(
   }
 );
 
-// ================== DOWNLOAD ==================
+
 router.get(
   "/:id/download",
   auth(true),
@@ -89,7 +89,7 @@ router.get(
   }
 );
 
-// ================== DELETE ==================
+
 router.delete("/:id", auth(true), requirePermission("canUpload"), async (req, res) => {
   try {
     const file = await File.findByPk(req.params.id);
